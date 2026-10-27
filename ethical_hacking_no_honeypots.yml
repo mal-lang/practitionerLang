@@ -1,0 +1,1297 @@
+assets:
+  0:
+    associated_assets:
+      containingApp:
+        30: GCP Bucket
+      readingIAMs:
+        47: GCP Service Account
+    extras:
+      position:
+        x: 1177.5
+        y: 2487.0
+    name: Flag_bucket
+    type: Data
+  1:
+    associated_assets:
+      appExecutedApps:
+        12: Samba Client
+        86: Firefox
+      containedData:
+        52: Flag_holey_firefox
+        89: Flag_binary_exploitation
+      highPrivAppIAMs:
+        50: root@buckeye
+      lowPrivAppIAMs:
+        54: user@buckeye
+      residingOnHost:
+        93: buckeye
+      vulnerabilities:
+        58: Binary Vulnerability
+    extras:
+      position:
+        x: -70.5
+        y: 813.0
+    name: Buckeye OS
+    type: Application
+  2:
+    associated_assets:
+      netConnections:
+        51: External ConnectionRule
+    extras:
+      position:
+        x: 2013.0
+        y: 28.5
+    name: External
+    type: Network
+  3:
+    associated_assets:
+      containingApp:
+        14: GCP Cloud Functions
+      information:
+        59: Function password
+      readingIAMs:
+        6: Function Identity
+    extras:
+      position:
+        x: 1461.0
+        y: 2230.5
+    name: Function Source Code
+    type: Data
+  4:
+    associated_assets:
+      appConnections:
+        22: DNS ConnectionRule
+      hostApp:
+        11: Sea-turtle OS
+      receivedData:
+        9: Flag_firefox_header
+      residingOnHost:
+        91: sea-turtle
+    extras:
+      position:
+        x: 375.0
+        y: -31.5
+    name: PHP-DNS
+    type: Application
+  5:
+    associated_assets:
+      appConnections:
+        17: Internal ConnectionRule
+      highPrivAppIAMs:
+        83: sshd@fancy-bear
+      hostApp:
+        90: Fancy-bear OS
+      residingOnHost:
+        95: fancy-bear
+    extras:
+      position:
+        x: 220.5
+        y: 1695.0
+    name: SSH Server
+    type: Application
+  6:
+    associated_assets:
+      credentials:
+        27: Function Token
+      lowPrivApps:
+        14: GCP Cloud Functions
+      readPrivData:
+        3: Function Source Code
+        73: Flag_cloud_source_code
+    extras:
+      position:
+        x: 1879.5
+        y: 2247.0
+    name: Function Identity
+    type: Identity
+  7:
+    associated_assets:
+      highPrivApps:
+        24: Energetic-bear OS
+      writePrivData:
+        65: Flag_hand_of_doom
+    extras:
+      position:
+        x: 595.5
+        y: 1308.0
+    name: root@energetic-bear
+    type: Identity
+  8:
+    associated_assets:
+      containingApp:
+        46: Lazarus OS
+      information:
+        42: Hashed Telnet Credentials
+    extras:
+      position:
+        x: 3060.0
+        y: -786.0
+    name: SAM Data
+    type: Data
+  9:
+    associated_assets:
+      receiverApp:
+        4: PHP-DNS
+        29: Cuiteur Web App
+      senderApp:
+        86: Firefox
+    extras:
+      position:
+        x: -370.5
+        y: -30.0
+    name: Flag_firefox_header
+    type: Data
+  10:
+    associated_assets:
+      containingApp:
+        87: FTP
+      readingIAMs:
+        76: FTP User
+    extras:
+      position:
+        x: 3199.5
+        y: 300.0
+    name: Flag_weak_pass
+    type: Data
+  11:
+    associated_assets:
+      appExecutedApps:
+        4: PHP-DNS
+        36: Telnet
+      containedData:
+        13: Flag_rotten_core
+        72: Flag_broken_window
+      highPrivAppIAMs:
+        44: root@sea-turtle
+      lowPrivAppIAMs:
+        34: user@sea-turtle
+      residingOnHost:
+        91: sea-turtle
+      vulnerabilities:
+        67: Kernel Vulnerability
+    extras:
+      position:
+        x: 426.0
+        y: -223.5
+    name: Sea-turtle OS
+    type: Application
+  12:
+    associated_assets:
+      appConnections:
+        17: Internal ConnectionRule
+      hostApp:
+        1: Buckeye OS
+      residingOnHost:
+        93: buckeye
+    extras:
+      position:
+        x: 150.0
+        y: 1473.0
+    name: Samba Client
+    type: Application
+  13:
+    associated_assets:
+      containingApp:
+        11: Sea-turtle OS
+      readingIAMs:
+        44: root@sea-turtle
+    extras:
+      position:
+        x: -414.0
+        y: -409.4999999999999
+    name: Flag_rotten_core
+    type: Data
+  14:
+    associated_assets:
+      appConnections:
+        66: GCP ConnectionRule
+      containedData:
+        3: Function Source Code
+        70: Flag_cloud_function
+      lowPrivAppIAMs:
+        6: Function Identity
+      residingOnHost:
+        97: GCP Services
+    extras:
+      position:
+        x: 1401.0
+        y: 1854.0
+    name: GCP Cloud Functions
+    type: Application
+  15:
+    associated_assets:
+      application:
+        21: Samba
+    extras:
+      position:
+        x: 1456.5
+        y: 1497.0
+    name: Eternal Red Vulnerability
+    type: SoftwareVulnerability
+  16:
+    associated_assets:
+      appConnections:
+        66: GCP ConnectionRule
+      containedData:
+        79: MetaData
+      residingOnHost:
+        97: GCP Services
+    extras:
+      position:
+        x: 1396.5
+        y: 1735.5
+    name: GCP Metadata
+    type: Application
+  17:
+    associated_assets:
+      applications:
+        5: SSH Server
+        12: Samba Client
+        21: Samba
+      networks:
+        77: Internal
+    extras:
+      position:
+        x: 613.0
+        y: 1449.0
+    name: Internal ConnectionRule
+    type: ConnectionRule
+  18:
+    associated_assets:
+      executionPrivIAMs:
+        28: NT authority/System
+      hostApp:
+        57: Tomcat
+      residingOnHost:
+        92: lazarus
+      vulnerabilities:
+        64: Axis2 Vulnerability
+    extras:
+      position:
+        x: 2056.5
+        y: -622.5
+    name: Axis2 container
+    type: Application
+  19:
+    associated_assets:
+      appConnections:
+        41: WiFi ConnectionRule
+      sentData:
+        39: Flag_wireless_infidelity_broadcast
+    extras:
+      position:
+        x: 534.0
+        y: 2709.0
+    name: Web Server
+    type: Application
+  20:
+    associated_assets:
+      credentials:
+        59: Function password
+      readPrivData:
+        70: Flag_cloud_function
+    extras:
+      position:
+        x: 909.0
+        y: 2094.0
+    name: Debug function Identity
+    type: Identity
+  21:
+    associated_assets:
+      appConnections:
+        17: Internal ConnectionRule
+      executionPrivIAMs:
+        33: root@cloud-hopper
+      hostApp:
+        23: Cloud-hopper OS
+      residingOnHost:
+        96: cloud-hopper
+      vulnerabilities:
+        15: Eternal Red Vulnerability
+    extras:
+      position:
+        x: 1056.6666666666667
+        y: 1573.3333333333335
+    name: Samba
+    type: Application
+  22:
+    associated_assets:
+      applications:
+        4: PHP-DNS
+        29: Cuiteur Web App
+      outApplications:
+        86: Firefox
+    extras:
+      position:
+        x: 816.0
+        y: -4.5
+    name: DNS ConnectionRule
+    type: ConnectionRule
+  23:
+    associated_assets:
+      appExecutedApps:
+        21: Samba
+      containedData:
+        49: Flag_bad_samba
+      highPrivAppIAMs:
+        33: root@cloud-hopper
+      receivedData:
+        79: MetaData
+      residingOnHost:
+        96: cloud-hopper
+    extras:
+      position:
+        x: 2505.0
+        y: 1665.0
+    name: Cloud-hopper OS
+    type: Application
+  24:
+    associated_assets:
+      appExecutedApps:
+        81: SQL Database
+        84: Web server
+      containedData:
+        63: Flag_cuiteur_sql_injection
+        65: Flag_hand_of_doom
+      highPrivAppIAMs:
+        7: root@energetic-bear
+      lowPrivAppIAMs:
+        55: www-data@energetic-bear
+      residingOnHost:
+        94: energetic-bear
+      vulnerabilities:
+        48: Hand_of_doom Vulnerability
+    extras:
+      position:
+        x: 829.5
+        y: 1021.5
+    name: Energetic-bear OS
+    type: Application
+  26:
+    associated_assets:
+      encryptCreds:
+        38: Wi-Fi Key
+      transitNetwork:
+        85: Wi-Fi
+    extras:
+      position:
+        x: 165.0
+        y: 3075.0
+    name: Flag_wireless_infidelity_wpa2
+    type: Data
+  27:
+    associated_assets:
+      containerData:
+        79: MetaData
+      identities:
+        6: Function Identity
+    extras:
+      position:
+        x: 2271.0
+        y: 2247.0
+    name: Function Token
+    type: Credentials
+  28:
+    associated_assets:
+      execPrivApps:
+        18: Axis2 container
+        57: Tomcat
+      highPrivApps:
+        46: Lazarus OS
+    extras:
+      position:
+        x: 2616.0
+        y: -615.0
+    name: NT authority/System
+    type: Identity
+  29:
+    associated_assets:
+      appConnections:
+        22: DNS ConnectionRule
+        51: External ConnectionRule
+        78: Local DB socket
+      clients:
+        86: Firefox
+      containedData:
+        68: Flag_cuiteur_recherce_old
+      hostApp:
+        84: Web server
+      lowPrivAppIAMs:
+        74: Cuiteur User Account
+      receivedData:
+        9: Flag_firefox_header
+      residingOnHost:
+        94: energetic-bear
+    extras:
+      position:
+        x: 841.5
+        y: 322.5
+    name: Cuiteur Web App
+    type: Application
+  30:
+    associated_assets:
+      appConnections:
+        66: GCP ConnectionRule
+      containedData:
+        0: Flag_bucket
+        45: Fancy-bear SSH keys
+        73: Flag_cloud_source_code
+      lowPrivAppIAMs:
+        47: GCP Service Account
+    extras:
+      position:
+        x: 520.5
+        y: 2362.5
+    name: GCP Bucket
+    type: Application
+  31:
+    associated_assets:
+      application:
+        86: Firefox
+    defenses:
+      networkAccessRequired: 1.0
+    extras:
+      position:
+        x: -514.5
+        y: 348.0
+    name: Firefox RCE
+    type: SoftwareVulnerability
+  32:
+    associated_assets:
+      application:
+        81: SQL Database
+    extras:
+      position:
+        x: 1711.5
+        y: 775.5
+    name: SQL injection
+    type: SoftwareVulnerability
+  33:
+    associated_assets:
+      execPrivApps:
+        21: Samba
+      highPrivApps:
+        23: Cloud-hopper OS
+      readPrivData:
+        49: Flag_bad_samba
+    extras:
+      position:
+        x: 1960.5
+        y: 1716.0
+    name: root@cloud-hopper
+    type: Identity
+  34:
+    associated_assets:
+      credentials:
+        61: Telnet Credentials
+      highPrivApps:
+        36: Telnet
+      lowPrivApps:
+        11: Sea-turtle OS
+      readPrivData:
+        72: Flag_broken_window
+    extras:
+      position:
+        x: 696.0
+        y: -772.5
+    name: user@sea-turtle
+    type: Identity
+  35:
+    associated_assets:
+      containedData:
+        69: Flag_tomcat_admin
+      hostApp:
+        71: Tomcat WebApp
+    extras:
+      position:
+        x: 1179.0
+        y: -477.0
+    name: hacktheplanet
+    type: Application
+  36:
+    associated_assets:
+      appConnections:
+        51: External ConnectionRule
+      highPrivAppIAMs:
+        34: user@sea-turtle
+      hostApp:
+        11: Sea-turtle OS
+      residingOnHost:
+        91: sea-turtle
+    extras:
+      position:
+        x: 870.0
+        y: -228.0
+    name: Telnet
+    type: Application
+  37:
+    associated_assets:
+      identities:
+        76: FTP User
+    extras:
+      position:
+        x: 3607.5
+        y: 198.0
+    name: FTP Credentials
+    type: Credentials
+  38:
+    associated_assets:
+      encryptedData:
+        26: Flag_wireless_infidelity_wpa2
+        39: Flag_wireless_infidelity_broadcast
+    extras:
+      position:
+        x: 1329.0
+        y: 3075.0
+    name: Wi-Fi Key
+    type: Credentials
+  39:
+    associated_assets:
+      encryptCreds:
+        38: Wi-Fi Key
+      senderApp:
+        19: Web Server
+      transitNetwork:
+        85: Wi-Fi
+    extras:
+      position:
+        x: 736.5
+        y: 2947.5
+    name: Flag_wireless_infidelity_broadcast
+    type: Data
+  40:
+    associated_assets:
+      credentials:
+        56: Tomcat Creds
+      highPrivApps:
+        71: Tomcat WebApp
+      lowPrivApps:
+        57: Tomcat
+    extras:
+      position:
+        x: 1762.5
+        y: -366.0
+    name: Tomcat Admin
+    type: Identity
+  41:
+    associated_assets:
+      applications:
+        19: Web Server
+        90: Fancy-bear OS
+      networks:
+        85: Wi-Fi
+    extras:
+      position:
+        x: -234.0
+        y: 2754.0
+    name: WiFi ConnectionRule
+    type: ConnectionRule
+  42:
+    associated_assets:
+      containerData:
+        8: SAM Data
+      origCreds:
+        61: Telnet Credentials
+    extras:
+      position:
+        x: 2515.5
+        y: -790.5
+    name: Hashed Telnet Credentials
+    type: Credentials
+  43:
+    associated_assets:
+      containingApp:
+        46: Lazarus OS
+    extras:
+      position:
+        x: 3441.0
+        y: -718.5
+    name: flag_axis2
+    type: Data
+  44:
+    associated_assets:
+      highPrivApps:
+        11: Sea-turtle OS
+      readPrivData:
+        13: Flag_rotten_core
+    extras:
+      position:
+        x: -409.5
+        y: -241.5
+    name: root@sea-turtle
+    type: Identity
+  45:
+    associated_assets:
+      containingApp:
+        30: GCP Bucket
+      information:
+        88: Fancy-bear SSH Credentials
+      readingIAMs:
+        47: GCP Service Account
+    extras:
+      position:
+        x: 499.5
+        y: 2587.5
+    name: Fancy-bear SSH keys
+    type: Data
+  46:
+    associated_assets:
+      appExecutedApps:
+        57: Tomcat
+        87: FTP
+      containedData:
+        8: SAM Data
+        43: flag_axis2
+      highPrivAppIAMs:
+        28: NT authority/System
+      residingOnHost:
+        92: lazarus
+    extras:
+      position:
+        x: 3070.5
+        y: -528.0
+    name: Lazarus OS
+    type: Application
+  47:
+    associated_assets:
+      credentials:
+        53: GCP Service Account Token
+      lowPrivApps:
+        30: GCP Bucket
+      readPrivData:
+        0: Flag_bucket
+        45: Fancy-bear SSH keys
+    extras:
+      position:
+        x: 1063.5
+        y: 2835.0
+    name: GCP Service Account
+    type: Identity
+  48:
+    associated_assets:
+      application:
+        24: Energetic-bear OS
+    defenses:
+      lowPrivilegesRequired: 1.0
+    extras:
+      position:
+        x: 426.0
+        y: 900.0
+    name: Hand_of_doom Vulnerability
+    type: SoftwareVulnerability
+  49:
+    associated_assets:
+      containingApp:
+        23: Cloud-hopper OS
+      readingIAMs:
+        33: root@cloud-hopper
+    extras:
+      position:
+        x: 2376.0
+        y: 1924.5
+    name: Flag_bad_samba
+    type: Data
+  50:
+    associated_assets:
+      highPrivApps:
+        1: Buckeye OS
+      readPrivData:
+        89: Flag_binary_exploitation
+    extras:
+      position:
+        x: 184.5
+        y: 529.5
+    name: root@buckeye
+    type: Identity
+  51:
+    associated_assets:
+      applications:
+        29: Cuiteur Web App
+        36: Telnet
+        57: Tomcat
+        71: Tomcat WebApp
+        87: FTP
+      networks:
+        2: External
+    extras:
+      position:
+        x: 1108.5
+        y: -85.5
+    name: External ConnectionRule
+    type: ConnectionRule
+  52:
+    associated_assets:
+      containingApp:
+        1: Buckeye OS
+      readingIAMs:
+        54: user@buckeye
+    extras:
+      position:
+        x: -478.5
+        y: 763.5
+    name: Flag_holey_firefox
+    type: Data
+  53:
+    associated_assets:
+      containerData:
+        79: MetaData
+      identities:
+        47: GCP Service Account
+    extras:
+      position:
+        x: 1908.0
+        y: 2640.0
+    name: GCP Service Account Token
+    type: Credentials
+  54:
+    associated_assets:
+      execPrivApps:
+        86: Firefox
+      lowPrivApps:
+        1: Buckeye OS
+      readPrivData:
+        52: Flag_holey_firefox
+    extras:
+      position:
+        x: -477.0
+        y: 589.5
+    name: user@buckeye
+    type: Identity
+  55:
+    associated_assets:
+      execPrivApps:
+        81: SQL Database
+      lowPrivApps:
+        24: Energetic-bear OS
+      readPrivData:
+        63: Flag_cuiteur_sql_injection
+    extras:
+      position:
+        x: 1335.0
+        y: 949.5
+    name: www-data@energetic-bear
+    type: Identity
+  56:
+    associated_assets:
+      identities:
+        40: Tomcat Admin
+    extras:
+      position:
+        x: 1690.5
+        y: -502.5
+    name: Tomcat Creds
+    type: Credentials
+  57:
+    associated_assets:
+      appConnections:
+        51: External ConnectionRule
+      appExecutedApps:
+        18: Axis2 container
+      executionPrivIAMs:
+        28: NT authority/System
+      hostApp:
+        46: Lazarus OS
+      lowPrivAppIAMs:
+        40: Tomcat Admin
+      residingOnHost:
+        92: lazarus
+    extras:
+      position:
+        x: 2289.0
+        y: -327.0
+    name: Tomcat
+    type: Application
+  58:
+    associated_assets:
+      application:
+        1: Buckeye OS
+    extras:
+      position:
+        x: -436.5
+        y: 1165.5
+    name: Binary Vulnerability
+    type: SoftwareVulnerability
+  59:
+    associated_assets:
+      containerData:
+        3: Function Source Code
+      identities:
+        20: Debug function Identity
+    extras:
+      position:
+        x: 982.5
+        y: 2253.0
+    name: Function password
+    type: Credentials
+  60:
+    associated_assets:
+      containingApp:
+        81: SQL Database
+    extras:
+      position:
+        x: 1512.0
+        y: 634.5
+    name: Flag_cuiteur_db
+    type: Data
+  61:
+    associated_assets:
+      hashes:
+        42: Hashed Telnet Credentials
+      identities:
+        34: user@sea-turtle
+    extras:
+      position:
+        x: 1987.5
+        y: -792.0
+    name: Telnet Credentials
+    type: Credentials
+  63:
+    associated_assets:
+      containingApp:
+        24: Energetic-bear OS
+      readingIAMs:
+        55: www-data@energetic-bear
+    extras:
+      position:
+        x: 1362.0
+        y: 1198.5
+    name: Flag_cuiteur_sql_injection
+    type: Data
+  64:
+    associated_assets:
+      application:
+        18: Axis2 container
+    extras:
+      position:
+        x: 1636.5
+        y: -673.5
+    name: Axis2 Vulnerability
+    type: SoftwareVulnerability
+  65:
+    associated_assets:
+      containingApp:
+        24: Energetic-bear OS
+      writingIAMs:
+        7: root@energetic-bear
+    extras:
+      position:
+        x: 1080.0
+        y: 1299.0
+    name: Flag_hand_of_doom
+    type: Data
+  66:
+    associated_assets:
+      applications:
+        14: GCP Cloud Functions
+        16: GCP Metadata
+        30: GCP Bucket
+      networks:
+        77: Internal
+    extras:
+      position:
+        x: 792.0
+        y: 1897.5
+    name: GCP ConnectionRule
+    type: ConnectionRule
+  67:
+    associated_assets:
+      application:
+        11: Sea-turtle OS
+    defenses:
+      localAccessRequired: 1.0
+      lowPrivilegesRequired: 1.0
+    extras:
+      position:
+        x: -196.5
+        y: -520.5
+    name: Kernel Vulnerability
+    type: SoftwareVulnerability
+  68:
+    associated_assets:
+      containingApp:
+        29: Cuiteur Web App
+      deletingIAMs:
+        74: Cuiteur User Account
+      readingIAMs:
+        74: Cuiteur User Account
+      writingIAMs:
+        74: Cuiteur User Account
+    extras:
+      position:
+        x: 1206.0
+        y: 91.5
+    name: Flag_cuiteur_recherce_old
+    type: Data
+  69:
+    associated_assets:
+      containingApp:
+        35: hacktheplanet
+    extras:
+      position:
+        x: 1168.3333333333333
+        y: -628.3333333333335
+    name: Flag_tomcat_admin
+    type: Data
+  70:
+    associated_assets:
+      containingApp:
+        14: GCP Cloud Functions
+      readingIAMs:
+        20: Debug function Identity
+    extras:
+      position:
+        x: 1246.5
+        y: 1972.5
+    name: Flag_cloud_function
+    type: Data
+  71:
+    associated_assets:
+      appConnections:
+        51: External ConnectionRule
+      appExecutedApps:
+        35: hacktheplanet
+      highPrivAppIAMs:
+        40: Tomcat Admin
+      residingOnHost:
+        92: lazarus
+    extras:
+      position:
+        x: 1265.0
+        y: -290.0
+    name: Tomcat WebApp
+    type: Application
+  72:
+    associated_assets:
+      containingApp:
+        11: Sea-turtle OS
+      readingIAMs:
+        34: user@sea-turtle
+    extras:
+      position:
+        x: 190.5
+        y: -579.0
+    name: Flag_broken_window
+    type: Data
+  73:
+    associated_assets:
+      containingApp:
+        30: GCP Bucket
+      readingIAMs:
+        6: Function Identity
+    extras:
+      position:
+        x: 1594.5
+        y: 2413.5
+    name: Flag_cloud_source_code
+    type: Data
+  74:
+    associated_assets:
+      deletePrivData:
+        68: Flag_cuiteur_recherce_old
+      lowPrivApps:
+        29: Cuiteur Web App
+      readPrivData:
+        68: Flag_cuiteur_recherce_old
+      writePrivData:
+        68: Flag_cuiteur_recherce_old
+    extras:
+      position:
+        x: 1333.5
+        y: 249.0
+    name: Cuiteur User Account
+    type: Identity
+  76:
+    associated_assets:
+      credentials:
+        37: FTP Credentials
+      lowPrivApps:
+        87: FTP
+      readPrivData:
+        10: Flag_weak_pass
+    extras:
+      position:
+        x: 3543.0
+        y: -156.0
+    name: FTP User
+    type: Identity
+  77:
+    associated_assets:
+      netConnections:
+        17: Internal ConnectionRule
+        66: GCP ConnectionRule
+    extras:
+      position:
+        x: 838.5
+        y: 1696.5
+    name: Internal
+    type: Network
+  78:
+    associated_assets:
+      applications:
+        29: Cuiteur Web App
+        81: SQL Database
+    extras:
+      position:
+        x: 1077.0
+        y: 529.5
+    name: Local DB socket
+    type: ConnectionRule
+  79:
+    associated_assets:
+      containingApp:
+        16: GCP Metadata
+      information:
+        27: Function Token
+        53: GCP Service Account Token
+      receiverApp:
+        23: Cloud-hopper OS
+    extras:
+      position:
+        x: 2670.0
+        y: 2247.0
+    name: MetaData
+    type: Data
+  81:
+    associated_assets:
+      appConnections:
+        78: Local DB socket
+      containedData:
+        60: Flag_cuiteur_db
+      executionPrivIAMs:
+        55: www-data@energetic-bear
+      hostApp:
+        24: Energetic-bear OS
+      residingOnHost:
+        94: energetic-bear
+      vulnerabilities:
+        32: SQL injection
+    extras:
+      position:
+        x: 1275.0
+        y: 781.5
+    name: SQL Database
+    type: Application
+  83:
+    associated_assets:
+      credentials:
+        88: Fancy-bear SSH Credentials
+      highPrivApps:
+        5: SSH Server
+      lowPrivApps:
+        90: Fancy-bear OS
+    extras:
+      position:
+        x: 27.0
+        y: 1956.0
+    name: sshd@fancy-bear
+    type: Identity
+  84:
+    associated_assets:
+      appExecutedApps:
+        29: Cuiteur Web App
+      hostApp:
+        24: Energetic-bear OS
+      residingOnHost:
+        94: energetic-bear
+    extras:
+      position:
+        x: 840.0
+        y: 817.5
+    name: Web server
+    type: Application
+  85:
+    associated_assets:
+      netConnections:
+        41: WiFi ConnectionRule
+      transitData:
+        26: Flag_wireless_infidelity_wpa2
+        39: Flag_wireless_infidelity_broadcast
+    extras:
+      position:
+        x: 154.5
+        y: 2916.0
+    name: Wi-Fi
+    type: Network
+  86:
+    associated_assets:
+      executionPrivIAMs:
+        54: user@buckeye
+      hostApp:
+        1: Buckeye OS
+      outgoingAppConnections:
+        22: DNS ConnectionRule
+      residingOnHost:
+        93: buckeye
+      sentData:
+        9: Flag_firefox_header
+      servers:
+        29: Cuiteur Web App
+      vulnerabilities:
+        31: Firefox RCE
+    extras:
+      position:
+        x: -85.5
+        y: 352.5
+    name: Firefox
+    type: Application
+  87:
+    associated_assets:
+      appConnections:
+        51: External ConnectionRule
+      containedData:
+        10: Flag_weak_pass
+      hostApp:
+        46: Lazarus OS
+      lowPrivAppIAMs:
+        76: FTP User
+      residingOnHost:
+        92: lazarus
+    extras:
+      position:
+        x: 3277.5
+        y: -268.5
+    name: FTP
+    type: Application
+  88:
+    associated_assets:
+      containerData:
+        45: Fancy-bear SSH keys
+      identities:
+        83: sshd@fancy-bear
+    extras:
+      position:
+        x: 70.5
+        y: 2197.5
+    name: Fancy-bear SSH Credentials
+    type: Credentials
+  89:
+    associated_assets:
+      containingApp:
+        1: Buckeye OS
+      readingIAMs:
+        50: root@buckeye
+    extras:
+      position:
+        x: 424.5
+        y: 681.0
+    name: Flag_binary_exploitation
+    type: Data
+  90:
+    associated_assets:
+      appConnections:
+        41: WiFi ConnectionRule
+      appExecutedApps:
+        5: SSH Server
+      lowPrivAppIAMs:
+        83: sshd@fancy-bear
+      residingOnHost:
+        95: fancy-bear
+    extras:
+      position:
+        x: -447.0
+        y: 2062.5
+    name: Fancy-bear OS
+    type: Application
+  91:
+    associated_assets:
+      hostedApplications:
+        4: PHP-DNS
+        11: Sea-turtle OS
+        36: Telnet
+    extras:
+      position:
+        x: 717.0
+        y: -111.0
+    name: sea-turtle
+    type: Host
+  92:
+    associated_assets:
+      hostedApplications:
+        18: Axis2 container
+        46: Lazarus OS
+        57: Tomcat
+        71: Tomcat WebApp
+        87: FTP
+    extras:
+      position:
+        x: 2800.5
+        y: -3.0
+    name: lazarus
+    type: Host
+  93:
+    associated_assets:
+      hostedApplications:
+        1: Buckeye OS
+        12: Samba Client
+        86: Firefox
+    extras:
+      position:
+        x: 210.0
+        y: 814.5
+    name: buckeye
+    type: Host
+  94:
+    associated_assets:
+      hostedApplications:
+        24: Energetic-bear OS
+        29: Cuiteur Web App
+        81: SQL Database
+        84: Web server
+    extras:
+      position:
+        x: 616.5
+        y: 537.0
+    name: energetic-bear
+    type: Host
+  95:
+    associated_assets:
+      hostedApplications:
+        5: SSH Server
+        90: Fancy-bear OS
+    extras:
+      position:
+        x: -310.5
+        y: 1726.5
+    name: fancy-bear
+    type: Host
+  96:
+    associated_assets:
+      hostedApplications:
+        21: Samba
+        23: Cloud-hopper OS
+    extras:
+      position:
+        x: 1984.5
+        y: 1527.0
+    name: cloud-hopper
+    type: Host
+  97:
+    associated_assets:
+      hostedApplications:
+        14: GCP Cloud Functions
+        16: GCP Metadata
+    extras:
+      position:
+        x: 1101.0
+        y: 1722.0
+    name: GCP Services
+    type: Host
+attackers:
+  -1:
+    entry_points:
+      Cuiteur User Account:
+        asset_id: 74
+        attack_steps:
+        - attemptAssume
+      External:
+        asset_id: 2
+        attack_steps:
+        - networkAccess
+    name: Attacker:-1
+metadata:
+  MAL-Toolbox Version: 0.3.11
+  info: Created by the mal-toolbox model python module.
+  langID: org.mal-lang.practitionerLang
+  langVersion: 1.0.0
+  malVersion: 0.1.0-SNAPSHOT
+  name: ethical_hacking_no_honeypots_positioned
