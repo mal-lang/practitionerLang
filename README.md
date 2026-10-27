@@ -32,7 +32,7 @@ This is what gets removed from `coreLang` and the thinking behind it.
 
 ### Defense Steps
 
-In `coreLang`, defense steps can be categorized into two types: _active defenses_ and _passive defenses_. _Passive defenses_ are handled like properties or attributes which get set at the start of a simulation. _Active defenses_, on the other hand, model actions that a defender can take during a simulation. In `practitionerLang`, we assume that there is no active defender agent, and therefore all defense steps related to _active defenses_ are removed.  
+In `coreLang`, defense steps can be categorized into two types: _active defenses_ and _passive defenses_. _Passive defenses_ are handled like properties or attributes which get set at the start of a simulation. They are supposed to represent settings for the modeller which changes the attack surface of the asset. _Active defenses_, on the other hand, model actions that a defender can take during a simulation. In `practitionerLang`, we assume that there is no active defender agent, and therefore all defense steps related to _active defenses_ are removed.  
 
 _Active defenses_ includes, for example:
 * `notPresent` (Indicates e.g. shutting off a machine/application or deleting a credential.)
