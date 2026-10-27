@@ -2,7 +2,18 @@
 _A MAL language using terminology familiar to cyber security practitioners._
 
 
-The repo houses the `practitionerLang` MAL language, which is a domain-specific language (DSL) for modeling cyber security scenarios. The language is designed to be an intuitive variant of `coreLang`, intended to be to use concepts understandable to cyber security practitioners. The language was developed based on the `coreLang` MAL language, which was modified to for an attacker-focused perspective. The language is intended to be used with the `mal-toolbox` as well as the `mal-simulator` to model and simulate cyber security scenarios.
+The repo houses the `practitionerLang` MAL language[^1], which is a domain-specific language (DSL) for modeling cyber security scenarios. The language is designed to be an intuitive variant of `coreLang`[^3], intended to be to use concepts understandable to cyber security practitioners. The language was developed based on the `coreLang` MAL language, which was modified to for an attacker-focused perspective. The language is intended to be used with the `mal-toolbox` as well as the `mal-simulator` to model and simulate cyber security scenarios.
+
+Links to related repositories:
+
+- [`coreLang`](https://github.com/mal-lang/coreLang)
+- [`mal-toolbox`](https://github.com/mal-lang/mal-toolbox) (Tools to compile and use MAL languages)
+- [`mal-simulator`](https://github.com/mal-lang/mal-simulator) (Simulator for MAL languages)
+- [`tree-sitter-mal`](https://github.com/mal-lang/tree-sitter-mal) (MAL Grammar definition)
+
+[^1]: [Link to first MAL article](https://doi.org/10.1145/3230833.3232799)
+[^2]: [Link to article which formally defines the MAL](https://doi.org/10.1016/j.cose.2023.103284)
+[^3]: [Link to article about the coreLang](https://doi.org/10.1016/j.cose.2024.104057)
 
 ## Compilation
 
