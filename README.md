@@ -2,7 +2,7 @@
 _A MAL language using terminology familiar to cyber security practitioners._
 
 
-The repo houses the `practitionerLang` MAL language[^1], which is a domain-specific language (DSL) for modeling cyber security scenarios. The language is designed to be an intuitive variant of `coreLang`[^3], intended to be to use concepts understandable to cyber security practitioners. The language was developed based on the `coreLang` MAL language, which was modified to for an attacker-focused perspective. The language is intended to be used with the `mal-toolbox` as well as the `mal-simulator` to model and simulate cyber security scenarios.
+The repo houses the `practitionerLang` MAL language[^1] [^2], which is a domain-specific language (DSL) for modeling cyber security scenarios. The language is designed to be an intuitive variant of `coreLang`[^3], intended to be to use concepts understandable to cyber security practitioners. The language was developed based on the `coreLang` MAL language, which was modified to for an attacker-focused perspective. The language is intended to be used with the `mal-toolbox` as well as the `mal-simulator` to model and simulate cyber security scenarios.
 
 Links to related repositories:
 
