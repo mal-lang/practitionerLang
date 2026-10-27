@@ -12,8 +12,10 @@ Links to related repositories:
 - [`tree-sitter-mal`](https://github.com/mal-lang/tree-sitter-mal) (MAL Grammar definition)
 
 [^1]: [Link to first MAL article](https://doi.org/10.1145/3230833.3232799)
+
 [^2]: [Link to article which formally defines the MAL](https://doi.org/10.1016/j.cose.2023.103284)
-[^3]: [Link to article about the coreLang](https://doi.org/10.1016/j.cose.2024.104057)
+
+[^3]: [Link to article about `coreLang`](https://doi.org/10.1016/j.cose.2024.104057)
 
 ## Compilation
 
