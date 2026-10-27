@@ -1,0 +1,273 @@
+/*
+ * Copyright 2019-2022 coreLang contributors <https://mal-lang.org/coreLang/contributors.html>
+ * Copyright 2026 Sandor Berglund and Simon Gökstorp
+ *
+ * Modified by Sandor Berglund and Simon Gökstorp for practitionerLang.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+category ComputeResources {
+
+    asset Hardware
+      user info: "Specifies the hardware on which applications can run."
+    {
+      | findVulnerability
+        agent info: "Look for vulnerabilities in the hardware."
+        user info: "The attacker is able to use the associated vulnerabilities, usually as a result of obtaining physical access."
+        ->  vulnerabilities.abuse
+
+      | spreadWormThroughRemovableMedia
+        agent info: "Spread computer worm through hardware."
+        developer info: "Try to spread malware through removable media that the users connect to the hardware system."
+        ->  users.deliverMaliciousRemovableMedia
+
+      | rootAccess {C,I,A}
+        agent info: "Gain root access on the hardware."
+        user info: "Root access on a piece of hardware grants root access on the applications running on it and access to the hosted data."
+        ->  sysExecutedApps.rootAccess,
+            hostedData.readAccess,
+            hostedData.writeAccess,
+            deny,
+            spreadWormThroughRemovableMedia
+
+      | unsafeUserActivity
+        agent info: "Exploit a user's unsafe activity on the hardware to perform malicious actions."
+        user info: "A user is performing unsafe actions on the hardware. This exposes the Applications running on top of the hardware and fulfils the physical access requirement of SoftwareVulnerabilities associated with them."
+        developer info: "Currently only represents connecting a malicious removable media drive."
+        ->  sysExecutedApps.unsafeUserActivity,
+            sysExecutedApps.physicalAccessAchieved
+
+      | deny {A}
+        agent info: "Perform Denial of Service on the hardware affecting its hosted resources."
+        user info: "Denial of service (DoS) attack on hardware leads to DoS on all the applications running on it and hosted data."
+        ->  sysExecutedApps.deny,
+            hostedData.deny
+
+      | read {C}
+        agent info: "Read hosted data and resources related to hosted applications."
+        user info: "Read on hardware leads to a read on all the applications running on it and hosted data."
+        ->  sysExecutedApps.read,
+            hostedData.readAccess
+
+      | modify {I}
+        agent info: "Modify the hardware, hosted data and resources related to hosted applications."
+        user info: "Modify on hardware gives the attacker root access to the hardware and leads to a modify/write on all the applications running on it and hosted data."
+        ->  rootAccess,
+            sysExecutedApps.modify,
+            hostedData.writeAccess
+    }
+
+    asset Application
+      user info: "An application models any type of software process or component, from firmware and operating systems to plugins and sessions."
+      modeler info: "Applications are some of the most common assets in models due to their versatility and scope."
+    {
+      let allVulnerabilities = vulnerabilities
+
+      let outgoingApplicationConnections = (appConnections \/ outgoingAppConnections)
+
+      let allIdentities = (lowPrivAppIAMs \/ highPrivAppIAMs \/ executionPrivIAMs)
+
+      | findVulnerability
+        agent info: "Look for vulnerabilities in the application."
+        user info: "Try to exploit the associated vulnerabilities."
+        developer info: "This includes vulnerabilities associated with the SoftwareProduct that this Application is running as well."
+        ->  allVulnerabilities().abuse
+
+      | localConnect
+        agent info: "Connect to the application locally (from the same machine)."
+        user info: "The attacker can interface with the Application without going through networking communications. This is achieved by gaining root access on a hosted Application, user access on the hosting Application, physical access on the hardware on which the Application is running, or via unsafe user activity."
+        ->  localAccess,
+            userAccessFromLocalConnection,
+            findVulnerability, // Attempt to exploit all the vulnerabilities associated with the Application
+            allVulnerabilities().localAccessAchieved,
+            allIdentities().discover,
+            lowPrivAppIAMs.credentials.guessCredentials, // SANDOR: Added so that an attacker is able to interface with the application is able to crack passwords and gain access
+            highPrivAppIAMs.credentials.guessCredentials // SANDOR: Added so that an attacker is able to interface with the application is able to crack passwords and gain access
+
+      | attemptScanPort @hidden
+        agent info: "Attempt to scan the port this application is exposed on."
+        user info: "Logical step representing the attacker being able to scan the port this application is exposed on."
+        -> scanPort,
+           residingOnHost.scanPorts
+
+      & scanPort @hidden
+        agent info: "Scan the port this application is exposed on."
+        user info: "Logical step to only let applications be found through scanning a host if the application is reachable by the attacker."
+        -> networkConnect
+
+      | networkConnect
+        agent info: "Connect to the application through a network."
+        user info: "An attacker can connect to any network exposed application and try to authenticate or trigger vulnerabilities."
+        ->  findVulnerability, // Attempt to exploit all the vulnerabilities associated with the Application
+            allVulnerabilities().networkAccessAchieved,
+            networkAccess,
+            userAccessFromNetworkConnection,
+            allIdentities().discover,
+            lowPrivAppIAMs.credentials.guessCredentials // SANDOR: Added so that an attacker able to connect to network is able to crack passwords and gain access
+
+      | accessNetworkAndConnections
+        agent info: "Access all networks that are reachable from the application."
+        developer info: "The attacker can access outgoing and bidirectional networks and connections associated with the application."
+        ->  outgoingApplicationConnections().connectToApplications,
+            outgoingApplicationConnections().accessNetworks
+
+      & reverseNetworkConnection [VeryHardAndUncertain]
+        agent info: "Use an incoming network connection to establish a connection to a client."
+        editor info: "This could be some kind of reverse connect, for example reverse shell."
+        developer info: "An attacker may be able to respond to requests submitted by a client application."
+        ->  networkConnect
+
+      & userAccessFromLocalConnection @hidden
+        agent info: "Get user privilege access locally."
+        developer info: "Intermediate attack steps for modeling the two requirements (reachability and authentication) for user access."
+        ->  userAccess
+
+      & userAccessFromNetworkConnection @hidden
+        agent info: "Get user privilege access through a network."
+        developer info: "Intermediate attack steps for modeling the two requirements (reachability and authentication) for user access."
+        ->  userAccess
+
+      | userAccess
+        agent info: "Gain user privilege access to the application."
+        user info: "The adversary is able to gain low-privilege access on the Application which allows them to access the networks and connections associated with it and locally connect to hosted Applications. Additionally, if they have the required privileges the attacker may also access data hosted, sent, or received by the Application."
+        ->  appExecutedApps.localConnect, // An attacker with low-privilege access on the executing instance is assumed to be able to locally interact with the executed applications.
+            readAsUser,
+            modifyAsUser,
+            denyAsUser,
+            bypassContainerization,
+            findVulnerability, // Attempt to exploit all the vulnerabilities associated with the Application
+            accessNetworkAndConnections // and access the network(s) and connections on/to which the app is connected
+
+      | bypassContainerization [HardAndUncertain]
+        agent info: "Break out of the container/sandbox to expose the host application."
+        user info: "The attacker is able to break out of an application container/sandbox and try to exploit any vulnerability of the host application."
+        ->  hostApp.findVulnerability
+
+      | authenticate
+        agent info: "Authenticate to the application with root privileges."
+        user info: "The attacker is able to authenticate with the appropriate high-level privileges."
+        ->  localAccess,
+            networkAccess,
+            allVulnerabilities().highPrivilegesAchieved
+
+      | authenticateAsUser
+        agent info: "Authenticate to the application with user privileges."
+        user info: "The attacker is able to authenticate with the appropriate low-level privileges."
+        ->  userAccessFromLocalConnection,
+            userAccessFromNetworkConnection,
+            allVulnerabilities().lowPrivilegesAchieved
+
+      & localAccess @hidden
+        agent info: "Gain access to the application locally."
+        developer info: "Intermediate attack steps for modeling the two requirements (reachability and authentication) for root access."
+        ->  rootAccess
+
+      & networkAccess @hidden
+        agent info: "Gain access to the application through a network."
+        developer info: "Intermediate attack steps for modeling the two requirements (reachability and authentication) for root access."
+        ->  rootAccess
+
+      | rootAccess @entrypoint {C,I,A}
+        agent info: "Gain access to the application with root privileges."
+        user info: "Root access on the Application means the attacker has complete control of the application and can perform any actions within its execution context."
+        modeler info: "It is common in models for the attacker to be granted root access on an Application, representing their own tools, that is connected to the Internet to explore possible attack vectors."
+        ->  read,
+            modify,
+            deny,
+            executionPrivIAMs.attemptAssume,  // Assume also the execution privilege identities of this application to the access to the entire execution context
+            accessNetworkAndConnections,  // and access the network(s) and connections on/to which the app is connected
+            hostApp.localConnect,    // and localConnect on the host application
+            managedRoutingFw.modify, // if the routing firewall manager app is compromised the routing firewall should also be compromised
+            hostHardware.spreadWormThroughRemovableMedia, // Propagate malware worms through removable media
+            hostHardware.findVulnerability, // If this application is run directly on hardware root access on it allows the attacker to exploit hardware vulnerabilities that do not require physical access
+            userAccess, // And also provide userAccess, mainly for completeness and more intuitive results
+            bypassContainerization
+
+      | physicalAccessAchieved @hidden
+        agent info: "Confirm access to the application physically."
+        developer info: "Intermediate attack step used to propagate physical access throughout application nesting."
+        ->  allVulnerabilities().physicalAccessAchieved,
+            appExecutedApps.physicalAccessAchieved
+
+      | unsafeUserActivity
+        agent info: "Exploit a user's unsafe activity on the application to perform malicious actions."
+        user info: "The unsafe actions of users on this application open it up to attacks and enable vulnerabilities that require user interaction."
+        ->  localConnect,
+            networkConnect,
+            allVulnerabilities().userInteractionAchieved
+
+      | read {C}
+        agent info: "Read source code, configs and data for this application with root privileges."
+        user info: "The attacker can read some or all of this service's (and executed by this) source code and/or data (both local and sent/received)."
+        ->  containedData.readAccess,
+            appExecutedApps.read, // Read all applications executed by this (host) application
+            sentData.readAccess, // Both sent and received Data can be read
+            receivedData.readAccess
+
+      | readAsUser {C}
+        agent info: "Read source code, configs and data for this application with user privileges."
+        user info: "The attacker can read the service's source code and/or sent and received Data, given the necessary permissions"
+        ->  containedData.readAsUser,
+            sentData.readAsUser, // Both Data sent and received can be read given the necessary permissions
+            receivedData.readAsUser
+
+      | modify {I}
+        agent info: "Modify source code, configs and data for this application (and other applications executed by it) with root privileges."
+        user info: "The attacker can modify some or all of this service's (and executed by this) source code and/or data."
+        ->  rootAccess,
+            containedData.writeAccess,
+            appExecutedApps.modify, // Gain access on all applications executed by this (host) application
+            sentData.writeAccess, // Sent Data can be written/modified
+            clients.reverseNetworkConnection // By modifying the application you can create a reverse connection to clients
+
+      | modifyAsUser {I}
+        agent info: "Modify source code, configs and data for this application with user privileges."
+        user info: "The attacker can modify the service's source code and/or sent  Data, given the necessary permissions"
+        ->  containedData.writeAsUser,
+            sentData.writeAsUser // Sent Data can be written given the necessary permissions
+
+      | deny {A}
+        agent info: "Perform Denial of Service on the application with root privileges."
+        user info: "The attacker can deny some or all functionality and data pertaining to this application/service as well as executed applications."
+        ->  containedData.deny,
+            appExecutedApps.deny,
+            sentData.deny // Sent Data can also be denied
+
+      | denyAsUser {A}
+        agent info: "Perform Denial of Service on the application with user privileges."
+        user info: "The attacker can delete some or all functionality and data pertaining to this application/service as well as executed applications, given the necessary permissions"
+        ->  containedData.deleteAsUser,
+            sentData.deleteAsUser // Sent Data can be deleted given the necessary permissions
+
+      & denyFromNetworkingAsset @hidden
+        agent info: "Remove network access from application."
+        developer info: "This is an intermediate attack step to only allow deny on an application when all the connection rules and networks associated with it are denied, because an app can be serving on many different ports."
+        ->  deny
+
+      & denyFromLockout @hidden
+        agent info: "Remove user access permissions from application."
+        developer info: "This is an intermediate attack step to only trigger deny on an application when all the executing access control roles are locked out."
+        ->  deny
+
+    }
+}
+
+associations {
+  Hardware         [hostHardware]      0..1 <-- SysExecution          --> *    [sysExecutedApps]        Application
+      user info: "Hardware on which Applications are running. The host hardware is not mandatory to be specified."
+  Application      [hostApp]           0..1 <-- AppExecution          --> *    [appExecutedApps]        Application
+      user info: "Sandboxing and containerization are represented through AppExecution. This application hosting can be nested. For example, application 1 runs application 2 which runs application 3. (Where application 1 is an OS, application 2 is a VM, and application 3 is app running in the VM.)"
+  Application      [servers]           *    <-- ActiveConnection          --> *    [clients]        Application
+      user info: "The clients have an active network connection to the server."
+}

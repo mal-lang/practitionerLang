@@ -1,0 +1,23 @@
+================================================================================
+== practitionerLang                                                           ==
+================================================================================
+
+practitionerLang
+Copyright © 2026 Sandor Berglund and Simon Gökstorp
+
+practitionerLang is derived from coreLang, with modifications by
+Sandor Berglund and Simon Gökstorp.
+
+Licensed under the Apache License, Version 2.0
+<https://www.apache.org/licenses/LICENSE-2.0>.
+
+================================================================================
+== coreLang                                                                   ==
+================================================================================
+
+coreLang
+Copyright © 2019-2020 coreLang contributors <https://mal-lang.org/coreLang/contributors.html>
+
+Licensed under the Apache License, Version 2.0
+<https://www.apache.org/licenses/LICENSE-2.0>.
+

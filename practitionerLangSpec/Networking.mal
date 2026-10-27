@@ -1,0 +1,146 @@
+/*
+ * Copyright 2019-2022 coreLang contributors <https://mal-lang.org/coreLang/contributors.html>
+ * Copyright 2026 Sandor Berglund and Simon Gökstorp
+ *
+ * Modified by Sandor Berglund and Simon Gökstorp for practitionerLang.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+category Networking {
+
+    asset Network
+      user info: "A network (zone) is a set of network accessible applications and data."
+      developer info: "The network asset tries to cover all the levels of the OSI stack in a very abstract and compact way (i.e. it tries to represent all the OSI layers). For example it will try to cover both ARP attacks (that are Level 2) but also DNS/HTTP spoofing attacks (that are Level 7)."
+    {
+      let outboundAllowedConnections = (netConnections \/ outgoingNetConnections)
+      let allNetConnections = (netConnections \/ ingoingNetConnections \/ outgoingNetConnections)
+
+      | physicalAccess @entrypoint {C, A}
+        agent info: "Gain physical access to the network."
+        user info: "Attacker has physical access on the network. This means they can cut wires/fibers, connect using iLOs, eavesdrop and get proper network access."
+        modeler info: "This attack step can be used as an entry point when analyzing scenarios that involve gaining physical access to assets."
+        ->  deny,
+            scan
+
+      | networkAccess @entrypoint
+        agent info: "Gain network access."
+        user info: "Attacker has network access on the network. This means they can eavesdrop and get proper network access."
+        -> scan
+
+      | scan
+        agent info: "Scan for public information and applications on the network."
+        user info: "Access provides connection to all reachable applications without any restrictions."
+        ->  outboundAllowedConnections().connectToApplications,
+            outboundAllowedConnections().accessNetworks,
+            eavesdrop,
+            adversaryInTheMiddle,
+            deny
+
+      | deny {A}
+        agent info: "Perform Denial of Service on the network."
+        user info: "If a DoS is performed it affects, the applications communicating over the network as well as the connected application."
+        ->  allNetConnections().deny,
+            allNetConnections().applications.denyFromNetworkingAsset
+
+      | eavesdrop {C} [HardAndUncertain]
+        agent info: "Listen to data in transit on the network."
+        user info: "An attacker that performs an eavesdrop attack on a network tries to access all the transferred data over that network."
+        ->  transitData.readAccess,
+            transitData.encryptCreds.guessCredentials
+
+      | adversaryInTheMiddle {C, I} [VeryHardAndUncertain]
+        agent info: "Perform adversary in the middle to listen and modify data in transit on the network."
+        user info: "An attacker that performs a AitM attack on a network tries to read and modify all the transferred data over that network."
+        ->  transitData.readAccess,
+            transitData.writeAccess,
+            transitData.encryptCreds.guessCredentials
+    }
+
+    asset RoutingFirewall extends Application
+      user info: "A routing firewall specifies a router with firewall capabilities that connects many networks."
+    {
+      | deny {A}
+        agent info: "Perform Denial of Service on the firewall."
+        user info: "A DoS attack should cascade on the connected networks and associated connections"
+        ->  connectionRules.deny
+
+      | rootAccess {I, A}
+        agent info: "Gain access to the firewall with root privileges."
+        developer info: "If root access is achieved on RoutingFirewall then it is 0wned and all connections can be allowed! This can happen by compromising the manager application."
+        +>  (connectionRules.networks \/ connectionRules.outNetworks \/ connectionRules.inNetworks).scan,
+            connectionRules.applications.networkConnect
+    }
+
+    asset ConnectionRule
+      user info: "This asset is used to model firewall rules between Applications and/or Networks. The association selected (bi/uni-directional) only describes the connection initiation."
+      developer info: "This asset is mainly used to model the functionality of a network connection through a firewall. If Data is added, then it also models the data in transit."
+    {
+      let allApplications = (applications \/ inApplications \/ outApplications)
+      let receiverApplications = (applications \/ inApplications)
+
+      | accessNetworks @hidden
+        agent info: "Access all networks associated with this set of routing rules."
+        developer info: "Access all networks that are associated with this ConnectionRule, without any restriction due to inspection."
+        ->  (networks  \/ inNetworks).scan
+
+      | connectToApplications @hidden
+        agent info: "Connect to applications available through this set of routing rules."
+        developer info: "Connect to all the (server) Applications that are associated with this ConnectionRule, without any restriction due to inspection."
+        ->  receiverApplications().attemptScanPort,
+            outApplications.reverseNetworkConnection
+
+      | deny {A}
+        agent info: "Perform Denial of Service for this set of routing rules."
+        user info: "If a connection rule is denied it affects the applications communicating over it."
+        ->  allApplications().denyFromNetworkingAsset
+    }
+
+    asset Host
+    user info: "This asset is supposed to represent a network host."
+    {
+      | scanPorts
+        agent info: "Scan for open ports on the host."
+        ->  hostedApplications.scanPort
+    }
+}
+
+associations {
+  // ### Networking associations
+  RoutingFirewall  [routingFirewalls]  0..1 <-- FirewallConnectionRule --> *    [connectionRules]       ConnectionRule
+      user info: "A routing firewall has routing or firewall rules specified by connections between networks or applications respectively."
+  RoutingFirewall  [managedRoutingFw]     * <-- ManagedBy             --> 0..1 [managerApp]             Application
+      user info: "A routing firewall can have an admin/manager interface (application) that is accessible from a network location."
+  Application      [applications]         * <-- ApplicationConnection --> *    [appConnections]         ConnectionRule
+      user info: "An application can communicate over one or more (mesh type) bidirectional connections."
+      modeler info: "ConnectionRules associated with Applications are practically expressing a traffic flow."
+  Application      [inApplications]       * <-- InApplicationConnection --> *  [ingoingAppConnections]  ConnectionRule
+      user info: "Two or more applications can also be inter-connected via a uni-directional connection. In means that this is the server side application, awaiting incoming connections."
+  Application      [outApplications]      * <-- OutApplicationConnection --> * [outgoingAppConnections] ConnectionRule
+      user info: "Two or more applications can also be inter-connected via a uni-directional connection. Out means that this is the client side application initiating connections."
+  Network          [networks]             * <-- NetworkConnection     --> *    [netConnections]         ConnectionRule
+      user info: "Two or more networks can also be inter-connected via a bidirectional connection."
+  Network          [inNetworks]           * <-- InNetworkConnection   --> *    [ingoingNetConnections]  ConnectionRule
+      user info: "Two or more networks can also be inter-connected via a uni-directional connection. In means that ingoing traffic to the network is allowed."
+  Network          [outNetworks]          * <-- OutNetworkConnection  --> *    [outgoingNetConnections] ConnectionRule
+      user info: "Two or more networks can also be inter-connected via a uni-directional connection. Out means that outgoing traffic from the network is allowed."
+  Application      [hostedApplications] * <-- HostedOn             --> 1    [residingOnHost]        Host
+      user info: "An application can be hosted on a host."
+//  Host      [hosts]         * <-- HostConnection --> *    [hostConnections]         ConnectionRule
+//      user info: "A host can communicate over one or more (mesh type) bidirectional connections."
+//      modeler info: "ConnectionRules associated with Applications are practically expressing a traffic flow."
+//  Host      [inHosts]       * <-- InHostConnection --> *  [ingoingHostConnections]  ConnectionRule
+//      user info: "Two or more hosts can also be inter-connected via a uni-directional connection. In means that this is the server side host, awaiting incoming connections."
+//  Host      [outHosts]      * <-- OutHostConnection --> * [outgoingHostConnections] ConnectionRule
+//      user info: "Two or more applications can also be inter-connected via a uni-directional connection. Out means that this is the client side application initiating connections."
+}

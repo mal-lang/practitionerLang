@@ -1,0 +1,164 @@
+/*
+ * Copyright 2019-2022 coreLang contributors <https://mal-lang.org/coreLang/contributors.html>
+ * Copyright 2026 Sandor Berglund and Simon Gökstorp
+ *
+ * Modified by Sandor Berglund and Simon Gökstorp for practitionerLang.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+category IAM {
+
+    asset Identity extends Information
+      user info: "An identity models an IAM identity that should then be associated with privileges on other instances."
+      developer info: "An identity can be visualised as a group of assumable roles that can be associated with many credentials."
+    {
+      | attemptAssume @hidden
+        agent info: "Attempt to assume identity through any means."
+        developer info: "Intermediate step to allow guessCredentials from Application:networkConnect"
+        -> successfulAssume
+
+      & successfulAssume @hidden
+        agent info: "Successfully assume the identity."
+        -> assume
+
+      | discover @hidden
+        agent info: "Discover that the identity exists."
+        -> successfulAssume
+
+      | assume {C,I,A}
+        agent info: "Assume the identity in order to be able use it."
+        user info: "After authentication or compromise of an account/identity, assume its privileges."
+        developer info: "This is both legitimate and illegitimate access! Also assume all the privileges of the parent identities (on the above level/inherited by this identity) because those represent the group of (inherited) roles."
+        ->  execPrivApps.authenticate,
+            highPrivApps.authenticate,
+            lowPrivApps.authenticateAsUser,
+            readPrivData.readAsUser,
+            writePrivData.writeAsUser,
+            deletePrivData.deleteAsUser,
+            managedIAMs.attemptAssume,
+            parentId.attemptAssume
+
+      & lockoutFromCredentials @hidden
+        agent info: "Lockout users from the identity by removing all of its credentials."
+        developer info: "Only lockout an identity if all of the Credentials that could be used to authenticate have been denied."
+        ->  lockout
+
+      | unsafeUserActivity
+        agent info: "Exploit a user's unsafe activity with the identity to perform malicious actions."
+        user info: "Propagate unsafe user activity to any Applications or subset of privileges associated with this Identity."
+        ->  execPrivApps.unsafeUserActivity,
+            highPrivApps.unsafeUserActivity,
+            lowPrivApps.unsafeUserActivity
+      
+      | lockout {A}
+        agent info: "Lockout users from the identity."
+        user info: "The Identity, Group, or Privileges has been locked out and cannot be used by legitimate users. This means that the applications that they can execute and data they can read might also be denied if all of the access roles that could execute or read them, respectively, have been locked out."
+        ->  execPrivApps.denyFromLockout,
+            readPrivData.denyFromLockout
+      
+      | deny
+        agent info: "Remove the identity from the system."
+        user info: "Denying Identity, Group, or Privileges means that they are unavailable to legitimate users and which may be locked out as a result."
+        ->  lockout
+
+      | write
+        agent info: "Edit the identity."
+        user info: "Overwriting Identity, Group, or Privileges means that the attacker is able to assume them."
+        ->  attemptAssume
+    }
+
+    asset Credentials extends Information
+      user info: "Credentials can be used to get access to an Identity, but they can also be used as an encryption/signing key for Data."
+      modeler info: "Credentials represent a variety of access control mechanism(e.g. username and password pair, keycards, biometric data)."
+    {
+      | read
+        agent info: "Read the credentials."
+        user info: "If the attacker is able to read the information containing credentials we assume that they are compromised."
+        +> attemptUse
+
+      | write
+        agent info: "Edit the credentials."
+        user info: "If the attacker is able to write the information containing credentials we assume that they have changed them for the authentication process."
+        +> attemptUse
+
+      | deny
+        agent info: "Remove the credentials."
+        user info: "If the attacker is able to deny the information containing credentials we assume that they have denied them for the authentication process."
+        +> identities.lockoutFromCredentials
+
+      | useLeakedCredentials @entrypoint
+        agent info: "Get the credentials from a leak."
+        user info: "If the password/credential is leaked to some location, it can then be available to the attacker and therefore it can be used."
+        ->  attemptUse
+
+      | attemptUse @hidden
+        agent info: "Attempt to use the credentials, failing if other credentials in the MFA chain are needed."
+        developer info: "In order to use these credentials the attacker may require additional factors."
+        ->  use
+
+      & use {C}
+        agent info: "Use the credentials to authenticate legitimately."
+        user info: "The attacker is using the credentials to perform a legitimate authentication."
+        ->  identities.attemptAssume,
+            encryptedData.accessDecryptedData,
+            signedData.accessSpoofedData,
+            (reusedCredentialsA \/ reusedCredentialsB).attemptUse, // the user these credentials belong to may be reusing credentials, in which case the attacker is able to compromise other credentials
+            credentials.use, // these credentials may serve as additional required factors for other credentials in a multi-factor authentication
+            hashes.attemptUse, // the hashes generated based on these credentials are also compromised as the attacker is assumed to know which hashing functions were used
+            origCreds.guessCredentials
+
+      | stealCredential
+        agent info: "Steal the credentials."
+        developer info: "The attacker is able to steal the credentials. If a credential cannot be stolen (e.g. physical MFA) this should be modeled by setting an unachievable TTC."
+        ->  attemptUse,
+            requiredFactors.stealCredential // TODO: Remove this? Ask Andrei.
+
+      | guessCredentials [HardAndUncertain]
+        agent info: "Guess the credentials with brute force or dictionary attack."
+        developer info: "The attacker can try to just guess a set of credentials. The likelihood of succeeding (and the TTC) should be dependent on how strong the credentials are."
+        modeler info: "The guessability of the Credentials is modeled by its TTC, which should be influenced by the Credential itself and the User associated with the Identity that these Credentials belong to. E.g., if this User is believed to use weak and easily guessable passwords, the Credentials should have a high chance to be guessable with a low TTC."
+        ->  attemptUse
+    }
+}
+
+associations {
+  Credentials      [encryptCreds]      0..1 <-- EncryptionCredentials --> *    [encryptedData]          Data
+      user info: "Encrypted data can be associated with the relevant encryption credentials."
+  Credentials      [signingCreds]      0..1 <-- SigningCredentials    --> *    [signedData]             Data
+      user info: "Signed data can be associated with the relevant signing credentials."
+  Credentials      [hashes]               * <-- HashedCredentials     --> 0..1 [origCreds]              Credentials
+      user info: "Credentials can be associated with their hashed counterparts. Multiple hashes can be generated for the same Credentials, but a hash is unique to one set of Credentials."
+  Credentials      [credentials]          * <-- ConditionalAuthentication --> * [requiredFactors]       Credentials
+      user info: "Credentials can be associated with other Credentials to depict conditional authentication procedures, such as multi-factor authentication."
+  Credentials      [reusedCredentialsA]   * <-- ReusedCredentials     --> * [reusedCredentialsB]        Credentials
+      user info: "Credentials can be associated with other Credentials to represent Credential reuse, meaning if one is compromised it is easy to compromise the other."
+  // ### Access Control happens below
+  Identity         [identities]           * <-- IdentityCredentials   --> *    [credentials]            Credentials
+  Identity         [parentId]             * <-- CanAssume             --> *    [childId]                Identity
+      user info: "Starting from a parent Identity, the child Identities can be assumed due to inheritance."
+  // Then, Access Control on application level
+  Identity        [executionPrivIAMs]    * <-- ExecutionPrivilegeAccess       --> * [execPrivApps]     Application
+      user info: "Every application executes on a system with privileges of a specified identity on the system. If the application is compromised then the privileges should be compromised."
+  Identity        [highPrivAppIAMs]      * <-- HighPrivilegeApplicationAccess --> * [highPrivApps]     Application
+      user info: "High privilege application access on an Application results in the (full) access/compromise of the application and all the child applications."
+  Identity        [lowPrivAppIAMs]       * <-- LowPrivilegeApplicationAccess  --> * [lowPrivApps]      Application
+      user info: "Low privilege application access on an Application allows only the local interaction with the application and all the specified privileges."
+  // Finally, Access control on data
+  Identity        [readingIAMs]          * <-- ReadPrivileges        --> *    [readPrivData]           Data
+  Identity        [writingIAMs]          * <-- WritePrivileges       --> *    [writePrivData]          Data
+  Identity        [deletingIAMs]         * <-- DeletePrivileges      --> *    [deletePrivData]         Data
+  // Self-referential associations for the IAMObject asset
+  Identity        [managers]             * <-- AccountManagement     --> *    [managedIAMs]            Identity
+      user info: "Identities, Groups, and Privileges may have account management roles for other Identities, Groups, and Privileges."
+}
